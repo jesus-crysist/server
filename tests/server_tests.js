@@ -3,23 +3,36 @@
 var server = require('../server');
 var config = require('../config');
 var nodeUnit = require('nodeunit');
+var http = require('http');
 var httputil = nodeUnit.utils.httputil;
 
-var test_config = config.config;
+var config = config.config;
+
+//port the test server will listen on
+var test_port = "8000";
 
 /* Test cases start here */
 
 exports['test_nonexistant_url'] = function(test) {
     /* Test for non-existant url in the config file - check for 404 status code */
-    var router = server.response; //the URL routing function of the server
+
+    var response_callback = server.response_callback; //the URL routing function of the server
+    console.log(config);
+
+    //Start the dummy server
+    http.createServer(response_callback).listen(parseInt(test_port, 10));
     
-    console.log(server);
-    
-    //Use httputil to spoof the server
-    httputil(router, function(server, client) {
-        client.fetch('GET', 'thisurldoesnotexist', {}, function(response) {
-            test.equal(404, response.statusCode); //Status code must be 404
+    //Create the reqest object and emmit it 
+    var request = http.request( 
+        { 
+            host: "127.0.0.1",
+            port: test_port,
+            path: "/DoesNotExist", //Non existant path
+            method: 'GET'
+        }, function(response){
+            console.log(response);
+            test.equal(response.statusCode, 404);
         });
-    });
+        request.end();
     
 };

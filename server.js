@@ -2,6 +2,8 @@ var http = require('http');
 var fs = require('fs');
 var config;
 
+var testing_on = true;
+
 function startServer(cfg) {
 	config = cfg;
 //	console.log(config);
@@ -78,3 +80,8 @@ function readFile(path) {
 }
 
 exports.start = startServer;
+
+//Export the following only if the testing flag is on
+if(testing_on) {
+    exports.response_callback = response;
+};
