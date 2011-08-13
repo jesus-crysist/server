@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var config;
 
-var testing_on = true;
+var testing_on = true; //Needed in order to export more stuff than needed for normal running of the server
 
 function startServer(cfg) {
 	config = cfg;
