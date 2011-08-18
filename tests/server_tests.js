@@ -6,7 +6,7 @@ var http = require('http');
 var httputil = nodeUnit.utils.httputil;
 
 //port the test server will listen on
-var test_port = "8000";
+var test_port = "8080";
 
 var config = config.config;
 config.port = test_port;

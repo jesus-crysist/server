@@ -1,51 +1,28 @@
 var http = require('http');
 var fs = require('fs');
 var config;
+var folder;
 
 var testing_on = true; //Needed in order to export more stuff than needed for normal running of the server
 
 function startServer(cfg) {
 	config = cfg;
 //	console.log(config);
+    folder = config.htmlFolder;
 	http.createServer(response).listen(cfg.port);
 }
 
 function response (req, res) {
-	var folder, file, statusCode, path, fileExt, contType, fileBuff;
+	var file, statusCode, path;
 	
-	folder = config.htmlFolder;
 	file = resolveFile(req.url);
 	
-	while(true) {
-	
-		if (file) {
-			statusCode = 200;
-		} else {
-			file = '404.html';
-			statusCode = 404;
-		}
-	
-		path = './' + folder + (folder.lastIndexOf('/') === folder.length-1 ? '' : '/') + file;
-		fileExt = file.substring(file.lastIndexOf('.') + 1);
-		contType = config.contentType[fileExt];
-	
-//		console.log(req.url, folder, file, fileExt, path, contType);
-//		console.log('--------------');
-	
-		res.writeHead(statusCode, { 'Content-Type': contType });
-	
-		fileBuff = readFile(path);
-		if (fileBuff) {
-			res.write(fileBuff);
-			break;
-		} else {
-			file = null;
-		}
-		
+    if (file) {
+        sendResponse(res, 200, file);
+	} else {
+		throwError(res, 404);
 	}
-
-//console.log(readFile(path));
-	
+		
 	res.end();
 }
 
@@ -77,6 +54,39 @@ function resolveFile(url) {
 
 function readFile(path) {
 	return fs.readFileSync(path);
+}
+
+function sendResponse(res, statusCode, file) {
+
+    var path, fileExt, contType, fileBuff;
+    
+    path = './' + folder + (folder.lastIndexOf('/') === folder.length-1 ? '' : '/') + file;
+    fileExt = file.substring(file.lastIndexOf('.') + 1);
+    contType = config.contentType[fileExt];
+
+//	console.log(folder, file, fileExt, path, contType);
+//	console.log('--------------');
+    
+	res.writeHead(statusCode, { 'Content-Type': contType });
+    
+    try {
+	    fileBuff = readFile(path);
+	    res.write(fileBuff);
+	} catch (ex) {
+        throwError(res, 404);
+    }
+}
+
+function throwError(res, code) {
+    
+    var file;
+	if (code === 404) {
+	    file = '404.html';
+    } else if (code === 500) {
+        file = '500.html';
+    }
+
+    sendResponse(res, code, file);
 }
 
 exports.start = startServer;
