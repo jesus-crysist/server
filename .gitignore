@@ -1,0 +1,5 @@
+#Javascript .swp files
+*.swp
+
+#Node installation directories - anywhere on the path
+node_modules/
