@@ -1,5 +1,8 @@
 #Javascript .swp files
 *.swp
 
+#Mac OS X desktop service file
+.DS_Store
+
 #Node installation directories - anywhere on the path
 node_modules/

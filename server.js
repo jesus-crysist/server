@@ -9,7 +9,11 @@ function startServer(cfg) {
 	config = cfg;
 //	console.log(config);
     folder = config.htmlFolder;
-	http.createServer(response).listen(cfg.port);
+    
+    //Return server object - needed for tests
+	server = http.createServer(response);
+    server.listen(cfg.port);
+    return server;
 }
 
 function response (req, res) {
@@ -64,7 +68,7 @@ function sendResponse(res, statusCode, file) {
     fileExt = file.substring(file.lastIndexOf('.') + 1);
     contType = config.contentType[fileExt];
 
-//	console.log(folder, file, fileExt, path, contType);
+	console.log(folder, file, fileExt, path, contType);
 //	console.log('--------------');
     
 	res.writeHead(statusCode, { 'Content-Type': contType });
@@ -90,8 +94,3 @@ function throwError(res, code) {
 }
 
 exports.start = startServer;
-
-//Export the following only if the testing flag is on
-if(testing_on) {
-    exports.response_callback = response;
-}
