@@ -1,9 +1,10 @@
 var http = require('http');
 var fs = require('fs');
+
+var logger = require('./logger').logger;
 var config;
 var folder;
 
-var testing_on = true; //Needed in order to export more stuff than needed for normal running of the server
 
 function startServer(cfg) {
 	config = cfg;
@@ -18,6 +19,9 @@ function startServer(cfg) {
 
 function response (req, res) {
 	var file, statusCode, path;
+
+    //Log the request 
+    logger.log_request(req);
 	
 	file = resolveFile(req.url);
 	
@@ -68,7 +72,7 @@ function sendResponse(res, statusCode, file) {
     fileExt = file.substring(file.lastIndexOf('.') + 1);
     contType = config.contentType[fileExt];
 
-	console.log(folder, file, fileExt, path, contType);
+//	console.log(folder, file, fileExt, path, contType);
 //	console.log('--------------');
     
 	res.writeHead(statusCode, { 'Content-Type': contType });

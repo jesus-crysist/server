@@ -6,3 +6,6 @@
 
 #Node installation directories - anywhere on the path
 node_modules/
+
+#Server log files need not be kept under version controll
+*.log

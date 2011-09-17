@@ -15,8 +15,11 @@ var config = {
 		}
 	],
 	
-	port: 8000
+	port: 8000,
 
+    //Log file settings
+    logfile : undefined,
+    log_template : '{url} {method} {accept} {user-agent} {remoteAddress}',
 };
 
 exports.config = config;
