@@ -1,15 +1,18 @@
 var http = require('http');
 var fs = require('fs');
+var router = require('./router');
 
 var logger = require('./logger').logger;
-var config;
-var folder;
+var config, folder, resolveFile;
 
 
 function startServer(cfg) {
 	config = cfg;
 //	console.log(config);
-    folder = config.htmlFolder;
+//    folder = config.htmlFolder;
+	folder = router.resolveRootDir(config.siteRoot, fs);
+	console.log('root dir:', folder);
+	resolveFile = router.resolveFile(folder, config.paths);
     
     //Return server object - needed for tests
 	server = http.createServer(response);
@@ -34,32 +37,6 @@ function response (req, res) {
 	res.end();
 }
 
-function resolveFile(url) {
-		
-	var paths = config.paths,
-		i, len, subpaths, j, sublen, path;
-		
-	url = url.substring(1);
-		
-	console.log('url', '"' + url + '"');
-		
-	for (i = 0, len = paths.length; i < len; i += 1){
-		path = paths[i];
-		subpaths = path.urls;
-//			console.log(subpaths);
-		
-		for (j = 0, sublen = subpaths.length; j < sublen; j += 1) {
-//			console.log(subpaths[j], subpaths[j] === url);
-			if (subpaths[j] === url) {
-//				console.log('match');
-				return path.file;
-			}
-		}
-	}
-	
-	return url;
-}
-
 function readFile(path) {
 	return fs.readFileSync(path);
 }
@@ -68,7 +45,7 @@ function sendResponse(res, statusCode, file) {
 
     var path, fileExt, contType, fileBuff;
     
-    path = './' + folder + (folder.lastIndexOf('/') === folder.length-1 ? '' : '/') + file;
+    path = folder + file;
     fileExt = file.substring(file.lastIndexOf('.') + 1);
     contType = config.contentType[fileExt];
 

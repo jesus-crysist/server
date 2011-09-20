@@ -6,7 +6,7 @@ var config = {
 		'js' : 'text/javascript'
 	},
 	
-	htmlFolder: 'www',
+	siteRoot: '~/www',
 	
 	paths: [
 		{
